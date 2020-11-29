@@ -1,0 +1,65 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.mycompany.serverside;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.ArrayList;
+
+/**
+ *
+ * @author NhatQuoc
+ */
+public class PlayerHandler implements Runnable {
+
+    private String name;
+    private int score;
+    private Socket player;
+    private BufferedReader in;
+    private PrintWriter out;
+    private ArrayList<PlayerHandler> listPlayer;
+
+    public PlayerHandler(String name, Socket playerSocket, BufferedReader in, PrintWriter out) throws IOException {
+        this.name = name;
+        this.player = playerSocket;
+        this.in = in;
+        this.out = out;
+        this.score = 0;
+        this.listPlayer = null;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getScore() {
+        return score;
+    }
+    
+    public PrintWriter getOut(){
+        return out;
+    }
+
+    public void setListPlayer(ArrayList<PlayerHandler> listPlayer) {
+        this.listPlayer = listPlayer;
+    }
+
+    public void sendInfoToAll() {
+        String info = name + "\n" + score;
+        for (PlayerHandler player : listPlayer) {
+            player.out.println(info);
+        }
+    }
+
+    @Override
+    public void run() {
+        //game play
+    }
+
+}
