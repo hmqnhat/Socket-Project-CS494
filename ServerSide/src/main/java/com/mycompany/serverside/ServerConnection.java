@@ -58,6 +58,7 @@ public class ServerConnection extends javax.swing.JFrame {
         txtNumberOfPlayers = new javax.swing.JTextField();
         btnListen = new javax.swing.JButton();
         labStatus = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
@@ -85,6 +86,7 @@ public class ServerConnection extends javax.swing.JFrame {
             }
         });
 
+        btnListen.setBackground(new java.awt.Color(0, 153, 153));
         btnListen.setText("Listen");
         btnListen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -95,6 +97,15 @@ public class ServerConnection extends javax.swing.JFrame {
         labStatus.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
         labStatus.setForeground(new java.awt.Color(255, 0, 51));
 
+        jButton1.setBackground(new java.awt.Color(153, 0, 51));
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton1.setText("STOP");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -104,15 +115,17 @@ public class ServerConnection extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
                 .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
+                .addGap(26, 26, 26)
                 .addComponent(jLabel3)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtNumberOfPlayers, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
+                .addGap(43, 43, 43)
                 .addComponent(btnListen)
-                .addGap(64, 64, 64))
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(203, Short.MAX_VALUE)
                 .addComponent(labStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(159, 159, 159))
         );
@@ -126,7 +139,8 @@ public class ServerConnection extends javax.swing.JFrame {
                     .addComponent(txtNumberOfPlayers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(jButton1))
                 .addGap(14, 14, 14))
         );
 
@@ -137,6 +151,7 @@ public class ServerConnection extends javax.swing.JFrame {
         jLabel6.setText("Score");
 
         txtScoreBoard.setEditable(false);
+        txtScoreBoard.setFont(new java.awt.Font("Cascadia Code PL", 1, 14)); // NOI18N
         jScrollPane2.setViewportView(txtScoreBoard);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -187,16 +202,16 @@ public class ServerConnection extends javax.swing.JFrame {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(153, 153, 153)
                 .addComponent(btnStart)
-                .addGap(155, 155, 155))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(318, Short.MAX_VALUE)
+                .addContainerGap(323, Short.MAX_VALUE)
                 .addComponent(btnStart)
-                .addGap(40, 40, 40))
+                .addGap(35, 35, 35))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -256,42 +271,47 @@ public class ServerConnection extends javax.swing.JFrame {
         PORT = Integer.parseInt(txtPort.getText());
         numberOfPlayers = Integer.parseInt(txtNumberOfPlayers.getText());
         pool = Executors.newFixedThreadPool(numberOfPlayers);
+        
+        new Thread(() -> {
 
-        try {
-            ServerSocket server = new ServerSocket(PORT);
-            JOptionPane.showMessageDialog(this, "Listening on port " + PORT);
-            while (true) {
+            try {
+                ServerSocket server = new ServerSocket(PORT);
+                JOptionPane.showMessageDialog(this, "Listening on port " + PORT);
 
-                Socket player = server.accept();
-                BufferedReader in = new BufferedReader(new InputStreamReader(player.getInputStream()));
-                PrintWriter out = new PrintWriter(player.getOutputStream(), true);
+                while (true) {
 
-                String name = in.readLine();
+                    Socket player = server.accept();
+                    BufferedReader in = new BufferedReader(new InputStreamReader(player.getInputStream()));
+                    PrintWriter out = new PrintWriter(player.getOutputStream(), true);
 
-                // Kiểm tra trùng tên
-                if (checkDuplicate(name)) {
+                    String name = in.readLine();
 
-                    PlayerHandler playerThread = new PlayerHandler(name, player, in, out);
-                    listPlayer.add(playerThread);
-                    //gửi thoong báo đăng ký thành công và gửi cho client danh sách Players
-                    out.println("Registration Completed Successfully");
-                    sendListPlayer();
+                    // Kiểm tra trùng tên
+                    if (checkDuplicate(name)) {
 
-                    pool.execute(playerThread);
-                } else {
-                    out.println("This name is already in use");
-                    player.close();
-                    in.close();
-                    out.close();
+                        PlayerHandler playerThread = new PlayerHandler(name, player, in, out);
+                        listPlayer.add(playerThread);
+                        printScoreBoard();
+                        //gửi thoong báo đăng ký thành công và gửi cho client danh sách Players
+                        out.println("Registration Completed Successfully");
+                        sendListPlayer();
+
+                        pool.execute(playerThread);
+                    } else {
+                        out.println("This name is already in use");
+                        player.close();
+                        in.close();
+                        out.close();
+                    }
                 }
 
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "I/O ERROR: " + ex.getMessage());
+
             }
+        }).start();
 
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "I/O ERROR: " + ex.getMessage());
-
-        }
     }//GEN-LAST:event_btnListenActionPerformed
 
     private void txtNumberOfPlayersKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNumberOfPlayersKeyReleased
@@ -312,6 +332,13 @@ public class ServerConnection extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_txtNumberOfPlayersKeyReleased
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        for (PlayerHandler player : listPlayer) {
+            player.close();
+        }
+        System.exit(0);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     //Kiểm tra trùng tên function
     private boolean checkDuplicate(String name) {
@@ -370,6 +397,16 @@ public class ServerConnection extends javax.swing.JFrame {
         }
 
     }
+    
+    //display score board
+    private void printScoreBoard() {
+        String scoreBoard = "";
+        for (PlayerHandler player : listPlayer) {
+            scoreBoard = scoreBoard +" "+ player.getName() + "\t      " + player.getScore() + "\n";
+        }
+
+        txtScoreBoard.setText(scoreBoard);
+    }
 
     /**
      * @param args the command line arguments
@@ -409,6 +446,7 @@ public class ServerConnection extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnListen;
     private javax.swing.JButton btnStart;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

@@ -263,28 +263,25 @@ public class ClientConnection extends javax.swing.JFrame {
         PORT = Integer.parseInt(txtPort.getText());
 
         try {
-            while (true) {
 
-                client = new Socket(HOST, PORT);
-                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                out = new PrintWriter(client.getOutputStream(), true);
+            client = new Socket(HOST, PORT);
+            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            out = new PrintWriter(client.getOutputStream(), true);
 
-                out.println(txtName.getText());
+            out.println(txtName.getText());
 
-                String response = in.readLine();
-                if (response.contains("This name is already in use")) {
-                    client.close();
-                    in.close();
-                    out.close();
-                } else {
-                    new Thread(() -> {
-                        listenResponse();
-                    }).start();
-                    break;
-                }
-                JOptionPane.showMessageDialog(this, response);
-
+            String response = in.readLine();
+            if (response.contains("This name is already in use")) {
+                txtName.setText("");
+                client.close();
+                in.close();
+                out.close();
+            } else {
+                new Thread(() -> {
+                    listenResponse();
+                }).start();
             }
+            JOptionPane.showMessageDialog(this, response);
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -331,7 +328,7 @@ public class ClientConnection extends javax.swing.JFrame {
     private void printScoreBoard() {
         String scoreBoard = "";
         for (Player player : listPlayer) {
-            scoreBoard = scoreBoard + player.getName() + "\t\t" + player.getScore() + "\n";
+            scoreBoard = scoreBoard + " " + player.getName() + "\t      " + player.getScore() + "\n";
         }
 
         txtScoreBoard.setText(scoreBoard);

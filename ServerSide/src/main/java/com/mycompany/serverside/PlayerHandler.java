@@ -11,6 +11,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -41,8 +43,8 @@ public class PlayerHandler implements Runnable {
     public int getScore() {
         return score;
     }
-    
-    public PrintWriter getOut(){
+
+    public PrintWriter getOut() {
         return out;
     }
 
@@ -55,6 +57,16 @@ public class PlayerHandler implements Runnable {
         for (PlayerHandler player : listPlayer) {
             player.out.println(info);
         }
+    }
+
+    public void close() {
+        try {
+            this.player.close();
+            this.in.close();
+        } catch (IOException ex) {
+            Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.out.close();
     }
 
     @Override
