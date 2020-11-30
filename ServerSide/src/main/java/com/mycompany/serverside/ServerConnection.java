@@ -32,6 +32,7 @@ public class ServerConnection extends javax.swing.JFrame {
     private static ArrayList<PlayerHandler> listPlayer;
     private ExecutorService pool;
     private ArrayList<QuestionHandler> listQuestion;
+    private int turn;
 
     /**
      * Creates new form ServerConnection
@@ -59,7 +60,7 @@ public class ServerConnection extends javax.swing.JFrame {
         txtNumberOfPlayers = new javax.swing.JTextField();
         btnListen = new javax.swing.JButton();
         labStatus = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnStop = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
@@ -70,7 +71,7 @@ public class ServerConnection extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        btnStart = new javax.swing.JButton();
+        btnNewGame = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtNotice = new javax.swing.JTextPane();
         jLabel8 = new javax.swing.JLabel();
@@ -114,12 +115,12 @@ public class ServerConnection extends javax.swing.JFrame {
         labStatus.setForeground(new java.awt.Color(255, 0, 51));
         labStatus.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
-        jButton1.setBackground(new java.awt.Color(153, 0, 51));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setText("STOP");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnStop.setBackground(new java.awt.Color(153, 0, 51));
+        btnStop.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnStop.setText("STOP");
+        btnStop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnStopActionPerformed(evt);
             }
         });
 
@@ -142,7 +143,7 @@ public class ServerConnection extends javax.swing.JFrame {
                         .addGap(43, 43, 43)
                         .addComponent(btnListen)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1)))
+                        .addComponent(btnStop)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -156,7 +157,7 @@ public class ServerConnection extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(jButton1))
+                    .addComponent(btnStop))
                 .addGap(14, 14, 14))
         );
 
@@ -168,6 +169,7 @@ public class ServerConnection extends javax.swing.JFrame {
 
         txtScoreBoard.setEditable(false);
         txtScoreBoard.setFont(new java.awt.Font("Cascadia Code PL", 1, 14)); // NOI18N
+        txtScoreBoard.setForeground(new java.awt.Color(0, 102, 204));
         jScrollPane2.setViewportView(txtScoreBoard);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -211,10 +213,15 @@ public class ServerConnection extends javax.swing.JFrame {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        btnStart.setBackground(new java.awt.Color(0, 102, 102));
-        btnStart.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnStart.setText("New Game");
-        btnStart.setEnabled(false);
+        btnNewGame.setBackground(new java.awt.Color(0, 102, 102));
+        btnNewGame.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnNewGame.setText("New Game");
+        btnNewGame.setEnabled(false);
+        btnNewGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewGameActionPerformed(evt);
+            }
+        });
 
         txtNotice.setEditable(false);
         txtNotice.setForeground(new java.awt.Color(51, 153, 0));
@@ -256,8 +263,8 @@ public class ServerConnection extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnStart))
+                        .addGap(12, 12, 12)
+                        .addComponent(btnNewGame))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(154, 154, 154)
                         .addComponent(jLabel8))
@@ -287,8 +294,8 @@ public class ServerConnection extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(47, 47, 47)
-                        .addComponent(btnStart)))
+                        .addGap(32, 32, 32)
+                        .addComponent(btnNewGame, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel8)
                 .addGap(21, 21, 21)
@@ -386,7 +393,7 @@ public class ServerConnection extends javax.swing.JFrame {
 
                     String name = in.readLine();
 
-                    if (numberOfPlayers < listPlayer.size()) {
+                    if (numberOfPlayers == listPlayer.size()) {
                         out.println("The room is out of slot");
                         player.close();
                         in.close();
@@ -395,6 +402,14 @@ public class ServerConnection extends javax.swing.JFrame {
 
                         PlayerHandler playerThread = new PlayerHandler(name, player, in, out);
                         listPlayer.add(playerThread);
+                        printNotice(name + " was involved");
+
+                        //kiểm tra nếu đủ người thì enabled NewGame Button
+                        if (numberOfPlayers == listPlayer.size()) {
+                            btnNewGame.setEnabled(true);
+                            printNotice("Already have enough players, can get started now!!");
+                        }
+
                         printScoreBoard();
                         //gửi thoong báo đăng ký thành công và gửi cho client danh sách Players
                         out.println("Registration Completed Successfully");
@@ -437,7 +452,7 @@ public class ServerConnection extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtNumberOfPlayersKeyReleased
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
         for (PlayerHandler player : listPlayer) {
             player.close();
         }
@@ -451,7 +466,21 @@ public class ServerConnection extends javax.swing.JFrame {
         }
 
         System.exit(0);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnStopActionPerformed
+
+    private void btnNewGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewGameActionPerformed
+        int i = getRandomNumber(listQuestion.size());
+        for (PlayerHandler player : listPlayer) {
+            player.setQuestion(listQuestion.get(i));
+            player.getOut().println("QUESTION");
+            player.sendLengthOfKeyword();
+            player.sendKeyword();
+            player.sendDescription();
+            player.getOut().println("END_QUESTION");
+        }
+
+
+    }//GEN-LAST:event_btnNewGameActionPerformed
 
     //Kiểm tra trùng tên function
     private boolean checkDuplicate(String name) {
@@ -521,6 +550,19 @@ public class ServerConnection extends javax.swing.JFrame {
         txtScoreBoard.setText(scoreBoard);
     }
 
+    //display notice board
+    private void printNotice(String msg) {
+        String temp = txtNotice.getText();
+        temp = temp + "\n" + msg;
+        txtNotice.setText(temp);
+    }
+
+    //get random number
+    private int getRandomNumber(int max) {
+        int ramdomNumber = (int) (Math.random() * (max));
+        return ramdomNumber;
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -558,8 +600,8 @@ public class ServerConnection extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnListen;
-    private javax.swing.JButton btnStart;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnNewGame;
+    private javax.swing.JButton btnStop;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

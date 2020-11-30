@@ -29,12 +29,19 @@ public class ClientConnection extends javax.swing.JFrame {
     private PrintWriter out;
     private Socket client;
 
+    private String keyword;
+    private String hint;
+    private int length;
+    private int turn;
+
     /**
      * Creates new form ClientConnection
      */
     public ClientConnection() {
         initComponents();
         listPlayer = new ArrayList<Player>();
+        turn = 0;
+        txtGuessKey.setText("");
     }
 
     /**
@@ -76,6 +83,11 @@ public class ClientConnection extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         labTimer = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        txtGuessChar = new javax.swing.JTextField();
+        txtGuessKey = new javax.swing.JTextField();
+        btnSubmit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Magical Wheel Client");
@@ -105,6 +117,7 @@ public class ClientConnection extends javax.swing.JFrame {
         labStatus.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
         labStatus.setForeground(new java.awt.Color(255, 0, 51));
 
+        btnExit.setBackground(new java.awt.Color(153, 0, 0));
         btnExit.setText("Exit");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -159,6 +172,7 @@ public class ClientConnection extends javax.swing.JFrame {
         jLabel6.setText("Score");
 
         txtScoreBoard.setFont(new java.awt.Font("Cascadia Code PL", 1, 14)); // NOI18N
+        txtScoreBoard.setForeground(new java.awt.Color(0, 102, 204));
         txtScoreBoard.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jScrollPane1.setViewportView(txtScoreBoard);
 
@@ -193,7 +207,7 @@ public class ClientConnection extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jLabel6))
@@ -218,7 +232,6 @@ public class ClientConnection extends javax.swing.JFrame {
         txtKeyword.setEditable(false);
         txtKeyword.setFont(new java.awt.Font("Calibri", 1, 16)); // NOI18N
         txtKeyword.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtKeyword.setText("zxsa*@##");
 
         jLabel10.setText("Hint:");
 
@@ -236,58 +249,76 @@ public class ClientConnection extends javax.swing.JFrame {
         labTimer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labTimer.setText("00");
 
+        jLabel7.setText("Guess Character: ");
+
+        jLabel13.setText("Guess Keyword:");
+
+        btnSubmit.setBackground(new java.awt.Color(0, 102, 153));
+        btnSubmit.setText("SUBMIT");
+        btnSubmit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSubmitActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(157, 157, 157)
+                .addComponent(jLabel8)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel13))
+                .addGap(30, 30, 30)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jSeparator3))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addComponent(txtGuessChar, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(labTimer)
+                        .addGap(57, 57, 57))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(txtGuessKey, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(39, 39, 39))))
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator3, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel9)
-                                    .addComponent(jLabel10)
-                                    .addComponent(jLabel11))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addGroup(jPanel4Layout.createSequentialGroup()
-                                            .addComponent(txtKeyword, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(labTimer)
-                                            .addGap(24, 24, 24))
-                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jScrollPane2)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                        .addGap(157, 157, 157)
-                        .addComponent(jLabel8)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel11))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                                    .addComponent(txtKeyword, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(24, 24, 24))
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel8)
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtKeyword, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
-                        .addComponent(labTimer)))
-                .addGap(26, 26, 26)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtKeyword, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(29, 29, 29)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -297,8 +328,18 @@ public class ClientConnection extends javax.swing.JFrame {
                             .addComponent(jLabel11)))
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(txtGuessChar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(labTimer))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(txtGuessKey, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSubmit))
+                .addGap(20, 20, 20))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -401,23 +442,24 @@ public class ClientConnection extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_btnExitActionPerformed
 
+    private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
+        out.println("CHAR\n" + txtGuessChar.getText());
+        out.println("KEY\n" + txtGuessKey.getText());       
+    }//GEN-LAST:event_btnSubmitActionPerformed
+
     private void recieveListPlayer() {
 
-        listPlayer.clear();//đảm bảo không bị trùng lặp player
+        listPlayer.clear();//đảm bảo không bị trùng player
         String name;
         int score;
 
         try {
             while (true) {
                 name = in.readLine();
-                System.out.println("name: " + name);
                 if (name.equals("END_INFO")) {
-                    System.out.println("BREAK");
                     break;
                 }
                 score = Integer.parseInt(in.readLine());
-                System.out.println("score: " + score);
-
                 Player p = new Player(name, score);
                 listPlayer.add(p);
             }
@@ -426,6 +468,86 @@ public class ClientConnection extends javax.swing.JFrame {
             ex.printStackTrace();
         }
 
+    }
+
+    private void recieveQuestion() {
+        String temp;
+
+        try {
+            while (true) {
+                temp = in.readLine();
+                if (temp.equals("END_QUESTION")) {
+                    break;
+                }
+                length = Integer.parseInt(temp);
+                keyword = in.readLine();
+                hint = in.readLine();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ClientConnection.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void recieveNotice() {
+        try {
+            String msg;
+            while (true) {
+                msg = in.readLine();
+                if (msg.equals("END_NOTICE")) {
+                    break;
+                }
+                printNotice(msg);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ClientConnection.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Can not read notification from server!!");
+        }
+    }
+
+    private void recieveBlurKeyword() {
+        try {
+            String res;
+            while (true) {
+                res = in.readLine();
+                if (res.equals("END_BLUR")) {
+                    break;
+                }
+                this.keyword = res;
+                updateKeyword();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ClientConnection.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Can not read notification from server!!");
+        }
+    }
+
+    private void recieveScore() {
+        try {
+            String name;
+            while (true) {
+                name = in.readLine();
+                if (name.equals("END_SCORE")) {
+                    break;
+                }
+                for (Player player : listPlayer) {
+                    if (player.getName().equals(name)) {
+                        player.setScore(Integer.parseInt(in.readLine()));
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ClientConnection.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void printQuestion() {
+        printNotice("The length of keyword: " + this.length);
+        updateKeyword();
+        txtHint.setText(hint);
+    }
+
+    private void updateKeyword() {
+        txtKeyword.setText(keyword);
     }
 
     private void printScoreBoard() {
@@ -437,7 +559,14 @@ public class ClientConnection extends javax.swing.JFrame {
         txtScoreBoard.setText(scoreBoard);
     }
 
-    //hàm lắng nghe response từ server, luôn chạy, có thể xem như router để thực hiện các actions đúng với respone đó
+    //display notice board
+    private void printNotice(String msg) {
+        String temp = txtNotice.getText();
+        temp = temp + "\n" + msg;
+        txtNotice.setText(temp);
+    }
+
+    //lắng nghe response từ server, luôn chạy, router để thực hiện các actions đúng với respone đó
     private void listenResponse() {
         try {
             while (true) {
@@ -446,6 +575,17 @@ public class ClientConnection extends javax.swing.JFrame {
                 System.out.println("res: " + res);
                 if (res.equals("INFO")) {
                     recieveListPlayer();
+                    printScoreBoard();
+                } else if (res.equals("QUESTION")) {
+                    printNotice("New game just started");
+                    recieveQuestion();
+                    printQuestion();
+                } else if (res.equals("NOTICE")) {
+                    recieveNotice();
+                } else if (res.equals("BLUR")) {
+                    recieveBlurKeyword();
+                } else if (res.equals("SOCRE")) {
+                    recieveScore();
                     printScoreBoard();
                 }
             }
@@ -493,15 +633,18 @@ public class ClientConnection extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConnect;
     private javax.swing.JButton btnExit;
+    private javax.swing.JButton btnSubmit;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -515,6 +658,8 @@ public class ClientConnection extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JLabel labStatus;
     private javax.swing.JLabel labTimer;
+    private javax.swing.JTextField txtGuessChar;
+    private javax.swing.JTextField txtGuessKey;
     private javax.swing.JTextPane txtHint;
     private javax.swing.JTextField txtKeyword;
     private javax.swing.JTextField txtName;
