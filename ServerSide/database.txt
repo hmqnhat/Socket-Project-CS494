@@ -1,8 +1,8 @@
 python
-pythonpythonpythonpythonpythonpythonpythonpython
+python python python python python
 java
-javajavajavajavajavajavajavajavajavajavajavajavajava
+java java java java java java java java java java java java java java java
 rubyonrail
-rubyonrailrubyonrailrubyonrailrubyonrailrubyonrail
+rubyonrail rubyonrail rubyonrail rubyonrail rubyonrail
 golang
-golanggolanggolanggolanggolanggolanggolang
+golan golan golan golan golan golan golan golan golan golan golan golan golan golan golan
