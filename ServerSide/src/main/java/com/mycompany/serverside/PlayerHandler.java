@@ -7,20 +7,18 @@ package com.mycompany.serverside;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /**
  *
  * @author NhatQuoc
  */
 public class PlayerHandler implements Runnable {
-    
+
     private String name;
     private int score;
     private Socket player;
@@ -30,8 +28,9 @@ public class PlayerHandler implements Runnable {
     private QuestionHandler question;
     private String gChar;
     private String gKey;
-    
-    public PlayerHandler(String name, Socket playerSocket, BufferedReader in, PrintWriter out) throws IOException {
+    private ServerConnection serverConn;
+
+    public PlayerHandler(String name, Socket playerSocket, BufferedReader in, PrintWriter out, ServerConnection server) throws IOException {
         this.name = name;
         this.player = playerSocket;
         this.in = in;
@@ -41,39 +40,44 @@ public class PlayerHandler implements Runnable {
         this.question = null;
         this.gChar = "";
         this.gKey = "";
+        this.serverConn = server;
     }
-    
+
     public void setQuestion(QuestionHandler question) {
         this.question = question;
     }
-    
+
     public QuestionHandler getQuestion() {
         return question;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
     public int getScore() {
         return score;
     }
-    
+
     public PrintWriter getOut() {
         return out;
     }
-    
+
     public void setListPlayer(ArrayList<PlayerHandler> listPlayer) {
         this.listPlayer = listPlayer;
     }
-    
+
     public void sendInfoToAll() {
         String info = name + "\n" + score;
         for (PlayerHandler player : listPlayer) {
             player.out.println(info);
         }
     }
-    
+
     public void close() {
         try {
             this.player.close();
@@ -83,19 +87,19 @@ public class PlayerHandler implements Runnable {
         }
         this.out.close();
     }
-    
+
     public void sendKeyword() {
         out.println(question.getBlurKeyword());
     }
-    
+
     public void sendDescription() {
         out.println(question.getDescription());
     }
-    
+
     public void sendLengthOfKeyword() {
         out.println(question.getLengthOfKeyword());
     }
-    
+
     private boolean guessChar() {
         int coef = question.guessChar(gChar);
         if (coef != 0) {
@@ -107,7 +111,7 @@ public class PlayerHandler implements Runnable {
         }
         return false;
     }
-    
+
     private boolean guessKey() {
         boolean ans = question.guessKey(gKey);
         if (ans) {
@@ -116,24 +120,24 @@ public class PlayerHandler implements Runnable {
         }
         return false;
     }
-    
+
     public void sendNotice(String msg) {
         out.println("NOTICE");
         out.println(msg);
         out.println("END_NOTICE");
     }
-    
+
     public void sendScoreToAll() {
         String info = name + "\n" + score;
-        
+
         for (PlayerHandler player : listPlayer) {
             player.out.println("SCORE");
             player.out.println(info);
             player.out.println("END_SCORE");
-            
+
         }
     }
-    
+
     public void sendNoticeToAll(String msg) {
         for (PlayerHandler player : listPlayer) {
             if (player.getName() != this.name) {
@@ -141,16 +145,22 @@ public class PlayerHandler implements Runnable {
             }
         }
     }
-    
+
     public void sendBlurKeyToAll() {
         for (PlayerHandler player : listPlayer) {
             player.out.println("BLUR");
             player.out.println(question.getBlurKeyword());
             player.out.println("END_BLUR");
-            
+
         }
     }
-    
+
+    private void addGuessCharSeq(char ch) {
+        for (PlayerHandler player : listPlayer) {
+            player.getQuestion().addGuessCharSeq(ch);
+        }
+    }
+
     private void listenRequest() {
         try {
             String request;
@@ -160,40 +170,43 @@ public class PlayerHandler implements Runnable {
                     this.gChar = in.readLine();
                     //gọi hàm guessChar đúng trả về true, sai: false
                     if (this.guessChar()) {
+
                         sendNoticeToAll("There are \"" + gChar + "\" letters in the keyword, " + this.name + " will keep guessing");
                         sendBlurKeyToAll();
                         //TODO: trường hợp đoán đúng ký tự cuối cùng
                         request = in.readLine();
                         if (request.equals("KEY")) {
                             this.gKey = in.readLine();
-                            if (this.gKey.equals("")) {
+                            if (!this.gKey.equals("")) {
                                 if (this.guessKey()) {
                                     //TODO: thông báo người chiến thắng
-                                    sendNoticeToAll("The keyword is "+ this.gKey+", " +this.name+" IS THE WINNER!!");
+                                    sendNoticeToAll("The keyword is " + this.gKey + ", " + this.name + " IS THE WINNER!!");
                                     //TODO: kết thúc game, chuẩn bị game kế tiếp
                                 } else {
                                     sendNotice("WRONG KEYWORD, you are disqualified!!");
-                                    //TODO: cho player này mất quyền chơi trong game này
-                                    sendScoreToAll();
+                                    //TODO: cho player mất quyền chơi trong game này
                                 }
                             }
+                            sendScoreToAll();
+                            serverConn.printScoreBoard();
                         }
-                        
+
                     } else {
-                        sendNotice(this.gChar + "is wrong character, you lose your turn!!");
+                        sendNotice(this.gChar + " is wrong character, you lose your turn!!");
                         sendNoticeToAll(this.gChar + "is wrong character, " + this.name + " lose his/her turn!!");
                     }
+                    addGuessCharSeq(this.gChar.charAt(0));
                 }
             }
         } catch (IOException ex) {
             Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @Override
     public void run() {
         //listen to client
         listenRequest();
     }
-    
+
 }

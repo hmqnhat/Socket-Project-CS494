@@ -32,7 +32,9 @@ public class ServerConnection extends javax.swing.JFrame {
     private static ArrayList<PlayerHandler> listPlayer;
     private ExecutorService pool;
     private ArrayList<QuestionHandler> listQuestion;
+    private int time;
     private int turn;
+    private String currentPlayer;
 
     /**
      * Creates new form ServerConnection
@@ -326,10 +328,6 @@ public class ServerConnection extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(252, 252, 252)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
@@ -342,7 +340,11 @@ public class ServerConnection extends javax.swing.JFrame {
                                         .addGap(43, 43, 43)
                                         .addComponent(jLabel4)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(260, 260, 260)))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -352,9 +354,9 @@ public class ServerConnection extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -384,6 +386,7 @@ public class ServerConnection extends javax.swing.JFrame {
             try {
                 server = new ServerSocket(PORT);
                 JOptionPane.showMessageDialog(this, "Listening on port " + PORT);
+                btnListen.setEnabled(false);
 
                 while (true) {
 
@@ -400,7 +403,7 @@ public class ServerConnection extends javax.swing.JFrame {
                         out.close();
                     } else if (checkDuplicate(name)) { // Kiểm tra trùng tên
 
-                        PlayerHandler playerThread = new PlayerHandler(name, player, in, out);
+                        PlayerHandler playerThread = new PlayerHandler(name, player, in, out, this);
                         listPlayer.add(playerThread);
                         printNotice(name + " was involved");
 
@@ -478,10 +481,11 @@ public class ServerConnection extends javax.swing.JFrame {
             player.sendDescription();
             player.getOut().println("END_QUESTION");
         }
-
-
+        txtKeyword.setText(listQuestion.get(i).getKeyword());
+        txtHint.setText(listQuestion.get(i).getDescription());
+        this.turn = 0;
     }//GEN-LAST:event_btnNewGameActionPerformed
-
+   
     //Kiểm tra trùng tên function
     private boolean checkDuplicate(String name) {
         if (listPlayer.size() > 0) {
@@ -538,10 +542,10 @@ public class ServerConnection extends javax.swing.JFrame {
             player.getOut().println("END_INFO");
         }
 
-    }
+    }  
 
     //display score board
-    private void printScoreBoard() {
+    public void printScoreBoard() {
         String scoreBoard = "";
         for (PlayerHandler player : listPlayer) {
             scoreBoard = scoreBoard + " " + player.getName() + "\t      " + player.getScore() + "\n";

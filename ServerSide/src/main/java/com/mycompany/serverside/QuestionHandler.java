@@ -83,7 +83,7 @@ public class QuestionHandler {
     }
     
     public void addGuessCharSeq(char ch){
-        //TODO
+        this.guessCharSeq = this.guessCharSeq + ch;
     }
 
     public int guessChar(String guessChar) {
