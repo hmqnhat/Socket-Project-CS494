@@ -88,6 +88,7 @@ public class ClientConnection extends javax.swing.JFrame {
         txtGuessChar = new javax.swing.JTextField();
         txtGuessKey = new javax.swing.JTextField();
         btnSubmit = new javax.swing.JButton();
+        labGuessChar = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Magical Wheel Client");
@@ -267,6 +268,9 @@ public class ClientConnection extends javax.swing.JFrame {
             }
         });
 
+        labGuessChar.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        labGuessChar.setForeground(new java.awt.Color(255, 0, 0));
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -306,8 +310,10 @@ public class ClientConnection extends javax.swing.JFrame {
                         .addGap(30, 30, 30)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(txtGuessChar, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtGuessChar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(labGuessChar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
                                 .addComponent(labTimer)
                                 .addGap(70, 70, 70))
                             .addGroup(jPanel4Layout.createSequentialGroup()
@@ -341,13 +347,14 @@ public class ClientConnection extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(labTimer)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addGap(8, 8, 8)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel7)
-                                    .addComponent(txtGuessChar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(txtGuessChar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(labGuessChar, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(labTimer))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel13)
@@ -468,7 +475,10 @@ public class ClientConnection extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSubmitActionPerformed
 
     private void txtGuessCharKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtGuessCharKeyReleased
-        if (txtGuessChar.getText().length() > 1 || txtGuessChar.getText().length() == 0) {
+        if (txtGuessChar.getText().length() == 0) {
+            btnSubmit.setEnabled(false);
+        } else if (txtGuessChar.getText().length() > 1) {
+            labGuessChar.setText("Just one char");
             btnSubmit.setEnabled(false);
         } else {
             btnSubmit.setEnabled(true);
@@ -684,6 +694,7 @@ public class ClientConnection extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JLabel labGuessChar;
     private javax.swing.JLabel labStatus;
     private javax.swing.JLabel labTimer;
     private javax.swing.JTextField txtGuessChar;
