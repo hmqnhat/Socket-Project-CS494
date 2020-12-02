@@ -103,7 +103,7 @@ public class ServerConnection extends javax.swing.JFrame {
 
         jLabel2.setText("PORT:");
 
-        jLabel3.setText("Number Of Players:");
+        jLabel3.setText("Number of Players:");
 
         txtNumberOfPlayers.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -112,6 +112,8 @@ public class ServerConnection extends javax.swing.JFrame {
         });
 
         btnListen.setBackground(new java.awt.Color(0, 153, 153));
+        btnListen.setForeground(new java.awt.Color(252, 252, 252));
+        btnListen.setFont(new java.awt.Font("Segoe UI", 1, 14));
         btnListen.setText("Listen");
         btnListen.setEnabled(false);
         btnListen.addActionListener(new java.awt.event.ActionListener() {
@@ -135,6 +137,7 @@ public class ServerConnection extends javax.swing.JFrame {
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
+        jPanel1.setBackground(new java.awt.Color(252, 252, 252));
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -144,7 +147,7 @@ public class ServerConnection extends javax.swing.JFrame {
                 .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(labStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(labStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -175,6 +178,8 @@ public class ServerConnection extends javax.swing.JFrame {
         jLabel5.setText("Name");
 
         jLabel6.setText("Score");
+        jLabel6.setFont(new java.awt.Font(jLabel6.getFont().getName(), 3, 14));
+        jLabel6.setForeground(new java.awt.Color(253, 193, 42));
 
         txtScoreBoard.setEditable(false);
         txtScoreBoard.setFont(new java.awt.Font("Cascadia Code PL", 1, 14)); // NOI18N
@@ -183,6 +188,7 @@ public class ServerConnection extends javax.swing.JFrame {
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
+        jPanel2.setBackground(new java.awt.Color(252, 252, 252));
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -215,7 +221,7 @@ public class ServerConnection extends javax.swing.JFrame {
         );
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel4.setText("List Of Players");
+        jLabel4.setText("Players");
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel7.setText("NOTICE BOARD");
@@ -261,9 +267,10 @@ public class ServerConnection extends javax.swing.JFrame {
 
         labTime.setFont(new java.awt.Font("Exo 2", 1, 24)); // NOI18N
         labTime.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labTime.setForeground(new java.awt.Color(227, 36, 43));
         labTime.setText("00");
 
-        jLabel15.setText("Time of ech turn");
+        jLabel15.setText("Time of each turn");
 
         cbbTime.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         cbbTime.addActionListener(new java.awt.event.ActionListener() {
@@ -274,6 +281,8 @@ public class ServerConnection extends javax.swing.JFrame {
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
+        jPanel3.setBackground(new java.awt.Color(252, 252, 252));
+        jPanel3.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
@@ -350,6 +359,7 @@ public class ServerConnection extends javax.swing.JFrame {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
+        getContentPane().setBackground(new java.awt.Color(252, 252, 252));
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -363,7 +373,7 @@ public class ServerConnection extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGap(43, 43, 43)
+                                        .addGap(70, 70, 70)
                                         .addComponent(jLabel4)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
@@ -375,7 +385,7 @@ public class ServerConnection extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jLabel7)
-                .addGap(174, 174, 174))
+                .addGap(240, 240, 240))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

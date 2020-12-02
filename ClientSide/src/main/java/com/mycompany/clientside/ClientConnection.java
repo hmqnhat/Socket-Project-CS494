@@ -108,6 +108,7 @@ public class ClientConnection extends javax.swing.JFrame {
         jLabel3.setText("Name:");
 
         btnConnect.setText("Connect");
+        btnConnect.setBackground(new java.awt.Color(0, 153, 153));
         btnConnect.setEnabled(false);
         btnConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -128,6 +129,7 @@ public class ClientConnection extends javax.swing.JFrame {
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
+        jPanel1.setBackground(new java.awt.Color(252, 252, 252));
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -171,6 +173,8 @@ public class ClientConnection extends javax.swing.JFrame {
         jLabel5.setText("Name");
 
         jLabel6.setText("Score");
+        jLabel6.setFont(new java.awt.Font(jLabel6.getFont().getName(), 3, 14));
+        jLabel6.setForeground(new java.awt.Color(253, 193, 42));
 
         txtScoreBoard.setFont(new java.awt.Font("Cascadia Code PL", 1, 14)); // NOI18N
         txtScoreBoard.setForeground(new java.awt.Color(0, 102, 204));
@@ -182,6 +186,7 @@ public class ClientConnection extends javax.swing.JFrame {
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
+        jPanel2.setBackground(new java.awt.Color(252, 252, 252));
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -249,6 +254,7 @@ public class ClientConnection extends javax.swing.JFrame {
         labTimer.setFont(new java.awt.Font("Exo 2", 1, 36)); // NOI18N
         labTimer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labTimer.setText("00");
+        labTimer.setForeground(new java.awt.Color(227, 36, 43));
 
         jLabel7.setText("Guess Character: ");
 
@@ -260,7 +266,7 @@ public class ClientConnection extends javax.swing.JFrame {
             }
         });
 
-        btnSubmit.setBackground(new java.awt.Color(0, 102, 153));
+        btnSubmit.setBackground(new java.awt.Color(60, 176, 67));
         btnSubmit.setText("SUBMIT");
         btnSubmit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -273,6 +279,7 @@ public class ClientConnection extends javax.swing.JFrame {
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
+        jPanel4.setBackground(new java.awt.Color(252, 252, 252));
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
@@ -368,6 +375,7 @@ public class ClientConnection extends javax.swing.JFrame {
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
+        getContentPane().setBackground(new java.awt.Color(252, 252, 252));
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
