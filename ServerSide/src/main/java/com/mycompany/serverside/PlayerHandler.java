@@ -29,6 +29,8 @@ public class PlayerHandler implements Runnable {
     private String gChar;
     private String gKey;
     private ServerConnection serverConn;
+    private boolean isDisqualified;
+    private boolean isTurn;
 
     public PlayerHandler(String name, Socket playerSocket, BufferedReader in, PrintWriter out, ServerConnection server) throws IOException {
         this.name = name;
@@ -41,10 +43,28 @@ public class PlayerHandler implements Runnable {
         this.gChar = "";
         this.gKey = "";
         this.serverConn = server;
+        this.isDisqualified = false;
+        isTurn = false;
+    }
+
+    public boolean getIsTurn() {
+        return this.isTurn;
+    }
+
+    public void setIsTurn(boolean turn) {
+        this.isTurn = turn;
     }
 
     public void setQuestion(QuestionHandler question) {
         this.question = question;
+    }
+
+    public void setDisqualified(boolean dis) {
+        this.isDisqualified = dis;
+    }
+
+    public boolean getDisqualified() {
+        return isDisqualified;
     }
 
     public QuestionHandler getQuestion() {
@@ -138,6 +158,14 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    public void sendTurnToAll(String name) {
+        for (PlayerHandler player : listPlayer) {
+            player.out.println("TURN");
+            player.out.println(name);
+            //Khong co EndName vi no se lam block cac req va res khac
+        }
+    }
+
     public void sendNoticeToAll(String msg) {
         for (PlayerHandler player : listPlayer) {
             if (player.getName() != this.name) {
@@ -155,47 +183,66 @@ public class PlayerHandler implements Runnable {
         }
     }
 
-    private void addGuessCharSeq(char ch) {
-        for (PlayerHandler player : listPlayer) {
-            player.getQuestion().addGuessCharSeq(ch);
+    private void addGuessCharSeq(String ch) {
+        if (!ch.equals("")) {
+            for (PlayerHandler player : listPlayer) {
+                player.getQuestion().addGuessCharSeq(ch.charAt(0));
+            }
         }
+
     }
 
     private void listenRequest() {
         try {
             String request;
             while (true) {
-                request = in.readLine();
-                if (request.equals("CHAR")) {
-                    this.gChar = in.readLine();
-                    //gọi hàm guessChar đúng trả về true, sai: false
-                    if (this.guessChar()) {
+                if (in.ready()) {
+                    request = in.readLine();
+                    if (request.equals("CHAR")) {
+                        this.gChar = in.readLine();
 
-                        sendNoticeToAll("There are \"" + gChar + "\" letters in the keyword, " + this.name + " will keep guessing");
-                        sendBlurKeyToAll();
-                        //TODO: trường hợp đoán đúng ký tự cuối cùng
-                        request = in.readLine();
-                        if (request.equals("KEY")) {
-                            this.gKey = in.readLine();
-                            if (!this.gKey.equals("")) {
-                                if (this.guessKey()) {
-                                    //TODO: thông báo người chiến thắng
-                                    sendNoticeToAll("The keyword is " + this.gKey + ", " + this.name + " IS THE WINNER!!");
-                                    //TODO: kết thúc game, chuẩn bị game kế tiếp
-                                } else {
-                                    sendNotice("WRONG KEYWORD, you are disqualified!!");
-                                    //TODO: cho player mất quyền chơi trong game này
+                        System.out.println("gChar: " + gChar);
+
+                        //gọi hàm guessChar đúng trả về true, sai: false
+                        if (this.guessChar()) {
+                            //tiếp tục trả lời
+
+                            System.out.println("guessChar(): true");
+
+                            this.isTurn = true;
+
+                            sendNoticeToAll("There are \"" + gChar + "\" letters in the keyword, " + this.name + " will keep guessing");
+                            sendBlurKeyToAll();
+                            //TODO: trường hợp đoán đúng ký tự cuối cùng
+                            request = in.readLine();
+                            if (request.equals("KEY")) {
+                                this.gKey = in.readLine();
+                                if (!this.gKey.equals("")) {
+                                    if (this.guessKey()) {
+                                        //TODO: thông báo người chiến thắng
+                                        sendNoticeToAll("The keyword is " + this.gKey + ", " + this.name.toUpperCase() + " IS THE WINNER!!");
+                                        //TODO: kết thúc game, chuẩn bị game kế tiếp
+                                    } else {
+                                        sendNotice("WRONG KEYWORD, you are disqualified!!");
+                                        //TODO: cho player mất quyền chơi trong game này
+                                        this.isDisqualified = true;
+                                    }
                                 }
+                                sendScoreToAll();
+                                serverConn.printScoreBoard();
                             }
-                            sendScoreToAll();
-                            serverConn.printScoreBoard();
-                        }
 
-                    } else {
-                        sendNotice(this.gChar + " is wrong character, you lose your turn!!");
-                        sendNoticeToAll(this.gChar + "is wrong character, " + this.name + " lose his/her turn!!");
+                        } else {
+
+                            System.out.println("guessChar(): false");
+
+                            //sai mất lượt
+                            this.isTurn = false;
+                            sendNotice(this.gChar + " is wrong character, you lose your turn!!");
+                            sendNoticeToAll(this.gChar + " is wrong character, " + this.name.toUpperCase() + " lose his/her turn!!");
+                        }
+                        addGuessCharSeq(this.gChar);
                     }
-                    addGuessCharSeq(this.gChar.charAt(0));
                 }
             }
         } catch (IOException ex) {

@@ -5,6 +5,8 @@
  */
 package com.mycompany.clientside;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 /**
  *
@@ -28,11 +31,17 @@ public class ClientConnection extends javax.swing.JFrame {
     private BufferedReader in;
     private PrintWriter out;
     private Socket client;
+    private String name;
 
     private String keyword;
     private String hint;
     private int length;
     private int turn;
+    private Timer timerM;
+    private Timer timerO;
+
+    private boolean isMyTurn;
+    private int time;
 
     /**
      * Creates new form ClientConnection
@@ -42,6 +51,8 @@ public class ClientConnection extends javax.swing.JFrame {
         listPlayer = new ArrayList<Player>();
         turn = 0;
         txtGuessKey.setText("");
+        setTurn(false);
+
     }
 
     /**
@@ -80,7 +91,7 @@ public class ClientConnection extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         txtHint = new javax.swing.JTextPane();
         jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
+        txtCurrentPlayer = new javax.swing.JLabel();
         labTimer = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
         jLabel7 = new javax.swing.JLabel();
@@ -89,6 +100,7 @@ public class ClientConnection extends javax.swing.JFrame {
         txtGuessKey = new javax.swing.JTextField();
         btnSubmit = new javax.swing.JButton();
         labGuessChar = new javax.swing.JLabel();
+        labCurrentTime = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Magical Wheel Client");
@@ -243,8 +255,8 @@ public class ClientConnection extends javax.swing.JFrame {
 
         jLabel11.setText("Current turn:");
 
-        jLabel12.setFont(new java.awt.Font("Calibri", 1, 14)); // NOI18N
-        jLabel12.setText("NAME");
+        txtCurrentPlayer.setFont(new java.awt.Font("Calibri", 1, 14)); // NOI18N
+        txtCurrentPlayer.setText("NAME");
 
         labTimer.setFont(new java.awt.Font("Exo 2", 1, 36)); // NOI18N
         labTimer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -271,6 +283,9 @@ public class ClientConnection extends javax.swing.JFrame {
         labGuessChar.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
         labGuessChar.setForeground(new java.awt.Color(255, 0, 0));
 
+        labCurrentTime.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        labCurrentTime.setText("00");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -290,7 +305,10 @@ public class ClientConnection extends javax.swing.JFrame {
                                     .addComponent(jLabel11))
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(txtCurrentPlayer, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(30, 30, 30)
+                                        .addComponent(labCurrentTime))
                                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
                                             .addComponent(txtKeyword, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -341,8 +359,9 @@ public class ClientConnection extends javax.swing.JFrame {
                                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(34, 34, 34)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel11)))
+                                    .addComponent(txtCurrentPlayer, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel11)
+                                    .addComponent(labCurrentTime)))
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -433,7 +452,8 @@ public class ClientConnection extends javax.swing.JFrame {
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             out = new PrintWriter(client.getOutputStream(), true);
 
-            out.println(txtName.getText());
+            this.name = txtName.getText();
+            out.println(this.name);
 
             String response = in.readLine();
             if (response.contains("This name is already in use") || response.contains("The room is out of slot")) {
@@ -468,11 +488,17 @@ public class ClientConnection extends javax.swing.JFrame {
     }//GEN-LAST:event_btnExitActionPerformed
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
-        out.println("CHAR\n" + txtGuessChar.getText());
-        out.println("KEY\n" + txtGuessKey.getText());
-        txtGuessChar.setText("");
-        txtGuessKey.setText("");
+        submitAction();
     }//GEN-LAST:event_btnSubmitActionPerformed
+
+    private void submitAction() {
+        if (this.isMyTurn) {
+            out.println("CHAR\n" + txtGuessChar.getText());
+            out.println("KEY\n" + txtGuessKey.getText());
+            txtGuessChar.setText("");
+            txtGuessKey.setText("");
+        }
+    }
 
     private void txtGuessCharKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtGuessCharKeyReleased
         if (txtGuessChar.getText().length() == 0) {
@@ -501,6 +527,7 @@ public class ClientConnection extends javax.swing.JFrame {
                 Player p = new Player(name, score);
                 listPlayer.add(p);
             }
+            printScoreBoard();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, "ERROR: Can not recive list player!!");
             ex.printStackTrace();
@@ -510,7 +537,8 @@ public class ClientConnection extends javax.swing.JFrame {
 
     private void recieveQuestion() {
         String temp;
-
+        setTurn(false);
+        printNotice("New game just started");
         try {
             while (true) {
                 temp = in.readLine();
@@ -520,10 +548,40 @@ public class ClientConnection extends javax.swing.JFrame {
                 length = Integer.parseInt(temp);
                 keyword = in.readLine();
                 hint = in.readLine();
+                time = Integer.parseInt(in.readLine());
+
+            }
+
+            printQuestion();
+
+        } catch (IOException ex) {
+            Logger.getLogger(ClientConnection.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void recieveCurrentTurn() {
+        String name = "";
+        try {
+            name = in.readLine();
+            if (name.equals(this.name)) {
+                setTurn(true);
+                mainCountDown();
+                txtCurrentPlayer.setText("YOUR TURN NOW");
+                //hết giờ tự submit coi như sai
+            } else {
+                txtCurrentPlayer.setText(name);
+                ortherCountDown();
             }
         } catch (IOException ex) {
             Logger.getLogger(ClientConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void setTurn(boolean status) {
+        btnSubmit.setEnabled(status);
+        txtGuessChar.setEditable(status);
+        txtGuessKey.setEditable(status);
+        this.isMyTurn = status;
     }
 
     private void recieveNotice() {
@@ -573,6 +631,9 @@ public class ClientConnection extends javax.swing.JFrame {
                     }
                 }
             }
+
+            printScoreBoard();
+
         } catch (IOException ex) {
             Logger.getLogger(ClientConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -597,6 +658,55 @@ public class ClientConnection extends javax.swing.JFrame {
         txtScoreBoard.setText(scoreBoard);
     }
 
+    private void mainCountDown() {
+        timerM = new Timer(1000, new ActionListener() {
+            private int t = time;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                t--;
+                if (t == 0) {
+                    labTimer.setText("00");
+                    submitAction();
+                    printNotice("TIMES UP!! The answer have been sent");
+                    setTurn(false);
+
+                    t = time;
+                    timerM.stop();
+                } else if (t < 10) {
+                    labTimer.setText("0" + t);
+                } else {
+                    labTimer.setText("" + t);
+                }
+            }
+        });
+
+        timerM.start();
+    }
+
+    private void ortherCountDown() {
+        timerO = new Timer(1000, new ActionListener() {
+            private int t = time;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                t--;
+                if (t == 0) {
+                    labCurrentTime.setText("00");
+
+                    t = time;
+                    timerO.stop();
+                } else if (t < 10) {
+                    labCurrentTime.setText("0" + t);
+                } else {
+                    labCurrentTime.setText("" + t);
+                }
+            }
+        });
+
+        timerO.start();
+    }
+
     //display notice board
     private void printNotice(String msg) {
         String temp = txtNotice.getText();
@@ -613,18 +723,16 @@ public class ClientConnection extends javax.swing.JFrame {
                 System.out.println("res: " + res);
                 if (res.equals("INFO")) {
                     recieveListPlayer();
-                    printScoreBoard();
                 } else if (res.equals("QUESTION")) {
-                    printNotice("New game just started");
                     recieveQuestion();
-                    printQuestion();
                 } else if (res.equals("NOTICE")) {
                     recieveNotice();
+                } else if (res.equals("TURN")) {
+                    recieveCurrentTurn();
                 } else if (res.equals("BLUR")) {
                     recieveBlurKeyword();
                 } else if (res.equals("SCORE")) {
                     recieveScore();
-                    printScoreBoard();
                 }
             }
         } catch (IOException ex) {
@@ -675,7 +783,6 @@ public class ClientConnection extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -694,9 +801,11 @@ public class ClientConnection extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JLabel labCurrentTime;
     private javax.swing.JLabel labGuessChar;
     private javax.swing.JLabel labStatus;
     private javax.swing.JLabel labTimer;
+    private javax.swing.JLabel txtCurrentPlayer;
     private javax.swing.JTextField txtGuessChar;
     private javax.swing.JTextField txtGuessKey;
     private javax.swing.JTextPane txtHint;

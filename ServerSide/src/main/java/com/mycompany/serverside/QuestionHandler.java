@@ -78,22 +78,25 @@ public class QuestionHandler {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
-    public void addGuessCharSeq(char ch){
+
+    public void addGuessCharSeq(char ch) {
         this.guessCharSeq = this.guessCharSeq + ch;
     }
 
     public int guessChar(String guessChar) {
         guessChar = guessChar.toLowerCase();
         int count = 0;
-        //kiểm tra xem ký tự này đã được đoán hay chưa
-        if(checkGuessCharSeq(guessChar.charAt(0))){
+        if (guessChar.equals("")) {
             return count;
         }
-        
+        //kiểm tra xem ký tự này đã được đoán hay chưa
+        if (checkGuessCharSeq(guessChar.charAt(0))) {
+            return count;
+        }
+
         char[] temp = keyword.toCharArray();
         for (int i = 0; i < temp.length; i++) {
             if (temp[i] == guessChar.charAt(0)) {

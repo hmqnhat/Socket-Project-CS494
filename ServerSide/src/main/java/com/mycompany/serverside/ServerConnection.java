@@ -37,7 +37,6 @@ public class ServerConnection extends javax.swing.JFrame {
     private ArrayList<QuestionHandler> listQuestion;
     private int time;
     private int turn;
-    private String currentPlayer;
     private Timer timer;
 
     /**
@@ -88,7 +87,7 @@ public class ServerConnection extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         txtHint = new javax.swing.JTextPane();
         jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
+        txtCurrentPlayer = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         labTime = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
@@ -138,22 +137,25 @@ public class ServerConnection extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(labStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(26, 26, 26)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtNumberOfPlayers, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(43, 43, 43)
                         .addComponent(btnListen)
                         .addGap(18, 18, 18)
-                        .addComponent(btnStop)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnStop))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(labStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(62, 62, 62)))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -254,8 +256,8 @@ public class ServerConnection extends javax.swing.JFrame {
 
         jLabel11.setText("Turn:");
 
-        jLabel12.setFont(new java.awt.Font("Calibri", 1, 14)); // NOI18N
-        jLabel12.setText("NAME");
+        txtCurrentPlayer.setFont(new java.awt.Font("Calibri", 1, 18)); // NOI18N
+        txtCurrentPlayer.setText("Current Player");
 
         jLabel13.setText("TIME:");
 
@@ -293,7 +295,8 @@ public class ServerConnection extends javax.swing.JFrame {
                                 .addGap(19, 19, 19))))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(154, 154, 154)
-                        .addComponent(jLabel8))
+                        .addComponent(jLabel8)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -305,11 +308,12 @@ public class ServerConnection extends javax.swing.JFrame {
                             .addComponent(txtKeyword, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(33, 33, 33)
-                                .addComponent(jLabel13)
+                                .addComponent(txtCurrentPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(18, 18, 18)
-                                .addComponent(labTime, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jLabel13)
+                                .addGap(39, 39, 39)
+                                .addComponent(labTime, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(47, 47, 47)))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -334,18 +338,14 @@ public class ServerConnection extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(34, 34, 34)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel11)
-                                    .addComponent(jLabel13)))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(labTime, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(16, 16, 16)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtCurrentPlayer, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel13)
+                            .addComponent(labTime, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(8, 8, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -498,18 +498,24 @@ public class ServerConnection extends javax.swing.JFrame {
     }//GEN-LAST:event_btnStopActionPerformed
 
     private void btnNewGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewGameActionPerformed
-        int i = getRandomNumber(listQuestion.size());
-        for (PlayerHandler player : listPlayer) {
-            player.setQuestion(listQuestion.get(i));
-            player.getOut().println("QUESTION");
-            player.sendLengthOfKeyword();
-            player.sendKeyword();
-            player.sendDescription();
-            player.getOut().println("END_QUESTION");
-        }
-        txtKeyword.setText(listQuestion.get(i).getKeyword());
-        txtHint.setText(listQuestion.get(i).getDescription());
         this.turn = 0;
+        sendQuestionToAll();
+
+        new Thread(() -> {
+            //thông báo người đầu tiền sẵn sàng cho lượt chơi của họ
+            listPlayer.get(0).sendNotice("READY FOR YOUR TURN!! Your turn will start in 3 seconds");
+//            try {
+//                Thread.sleep(3 * 1000);
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(ServerConnection.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+
+            for (int i = 0; i < 5; i++) {
+                alignTurn();
+                this.turn++;
+            }
+        }).start();
+
     }//GEN-LAST:event_btnNewGameActionPerformed
 
     private void cbbTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbTimeActionPerformed
@@ -523,6 +529,21 @@ public class ServerConnection extends javax.swing.JFrame {
         }
     }
 
+    private void sendQuestionToAll() {
+        int i = getRandomNumber(listQuestion.size());
+        for (PlayerHandler player : listPlayer) {
+            player.setQuestion(listQuestion.get(i));
+            player.getOut().println("QUESTION");
+            player.sendLengthOfKeyword();
+            player.sendKeyword();
+            player.sendDescription();
+            player.getOut().println(this.time);
+            player.getOut().println("END_QUESTION");
+        }
+        txtKeyword.setText(listQuestion.get(i).getKeyword());
+        txtHint.setText(listQuestion.get(i).getDescription());
+    }
+
     public void countDown(int time) {
         timer = new Timer(1000, new ActionListener() {
             private int t = time;
@@ -531,6 +552,8 @@ public class ServerConnection extends javax.swing.JFrame {
             public void actionPerformed(ActionEvent e) {
                 t--;
                 if (t == 0) {
+                    t = time;
+                    labTime.setText("00");
                     timer.stop();
                 } else if (t < 10) {
                     labTime.setText("0" + t);
@@ -542,12 +565,57 @@ public class ServerConnection extends javax.swing.JFrame {
 
         timer.start();
     }
-    
-    public void setTurn(int turn){
+
+    public void setTurn(int turn) {
         this.turn = turn;
     }
 
+    public void alignTurn() {
+
+        PlayerHandler p;
+        for (int i = 0; i < listPlayer.size(); i++) {
+            p = listPlayer.get(i);
+            if (p.getDisqualified()) {
+                continue;
+            }
+            // thông báo cho người chơi tiếp theo chuẩn bị
+            {
+                if (i + 1 < listPlayer.size()) {
+                    listPlayer.get(0).sendNotice("READY FOR YOUR TURN!! The next turn is yours");
+                }
+            }
+
+            p.sendTurnToAll(p.getName());
+            //send name of current player to all
+            countDown(this.time);
+            txtCurrentPlayer.setText(p.getName());
+            try {
+//                for (int j = 0; j < this.time * 2; j++) {
+//                    flag = p.getIsTurn();
+//                    if (flag == true) {
+//                        break;
+//                    }
+//                    Thread.sleep(500);
+//                }
+
+                System.out.println("Thread sleep");
+
+                Thread.sleep((this.time + 1) * 1000);
+
+                System.out.println("Thread wake up");
+
+                if (p.getIsTurn()) {
+                    System.out.println("getisturn: true");
+                    --i;
+                }
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ServerConnection.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "ERROR: Can not delay time!!");
+            }
+        }
+    }
     //Kiểm tra trùng tên function
+
     private boolean checkDuplicate(String name) {
         if (listPlayer.size() > 0) {
             for (PlayerHandler player : listPlayer) {
@@ -671,7 +739,6 @@ public class ServerConnection extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
@@ -692,6 +759,7 @@ public class ServerConnection extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel labStatus;
     private javax.swing.JLabel labTime;
+    private javax.swing.JLabel txtCurrentPlayer;
     private javax.swing.JTextPane txtHint;
     private javax.swing.JTextField txtKeyword;
     private javax.swing.JTextPane txtNotice;
