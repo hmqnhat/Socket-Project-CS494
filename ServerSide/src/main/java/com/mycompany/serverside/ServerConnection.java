@@ -36,8 +36,8 @@ public class ServerConnection extends javax.swing.JFrame {
     private ExecutorService pool;
     private ArrayList<QuestionHandler> listQuestion;
     private int time;
-    private int turn;
     private Timer timer;
+    private boolean isFinish;
 
     /**
      * Creates new form ServerConnection
@@ -407,6 +407,9 @@ public class ServerConnection extends javax.swing.JFrame {
         numberOfPlayers = Integer.parseInt(txtNumberOfPlayers.getText());
         pool = Executors.newFixedThreadPool(numberOfPlayers);
 
+        txtPort.setEditable(false);
+        txtNumberOfPlayers.setEditable(false);
+
         new Thread(() -> {
 
             try {
@@ -498,22 +501,39 @@ public class ServerConnection extends javax.swing.JFrame {
     }//GEN-LAST:event_btnStopActionPerformed
 
     private void btnNewGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewGameActionPerformed
-        this.turn = 0;
+
+        isFinish = false;
         sendQuestionToAll();
+        btnNewGame.setEnabled(false);
+        cbbTime.setEditable(false);
 
         new Thread(() -> {
             //thông báo người đầu tiền sẵn sàng cho lượt chơi của họ
             listPlayer.get(0).sendNotice("READY FOR YOUR TURN!! Your turn will start in 3 seconds");
-//            try {
-//                Thread.sleep(3 * 1000);
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(ServerConnection.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            try {
+                Thread.sleep(3 * 1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ServerConnection.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
             for (int i = 0; i < 5; i++) {
+                if (isFinish) {
+                    break;
+                }
                 alignTurn();
-                this.turn++;
             }
+
+            for (PlayerHandler p : listPlayer) {
+                p.sendNotice("Maybe this question so difficult, let's try with another question");
+            }
+
+            listPlayer.get(0).sendDialogToAll("Let's try with another question!!");
+
+            if (timer != null) {
+                timer.stop();
+                labTime.setText("00");
+            }
+
         }).start();
 
     }//GEN-LAST:event_btnNewGameActionPerformed
@@ -522,6 +542,14 @@ public class ServerConnection extends javax.swing.JFrame {
         this.time = Integer.parseInt("" + cbbTime.getSelectedItem());
         labTime.setText("" + this.time);
     }//GEN-LAST:event_cbbTimeActionPerformed
+
+    public void setIsFinish(boolean b) {
+        this.isFinish = b;
+    }
+
+    public boolean getIsFinish() {
+        return this.isFinish;
+    }
 
     private void initTime() {
         for (int i = 10; i <= 60; i++) {
@@ -566,10 +594,6 @@ public class ServerConnection extends javax.swing.JFrame {
         timer.start();
     }
 
-    public void setTurn(int turn) {
-        this.turn = turn;
-    }
-
     public void alignTurn() {
 
         PlayerHandler p;
@@ -585,28 +609,38 @@ public class ServerConnection extends javax.swing.JFrame {
                 }
             }
 
+            if (timer != null) {
+                timer.stop();
+                labTime.setText("00");
+            }
             p.sendTurnToAll(p.getName());
             //send name of current player to all
             countDown(this.time);
             txtCurrentPlayer.setText(p.getName());
             try {
-//                for (int j = 0; j < this.time * 2; j++) {
-//                    flag = p.getIsTurn();
-//                    if (flag == true) {
-//                        break;
-//                    }
-//                    Thread.sleep(500);
-//                }
+                for (int j = 0; j < (this.time + 1) * 2; j++) {
 
-                System.out.println("Thread sleep");
+                    if (isFinish || p.getIsTurn() || p.getIsSubmit()) {
+                        break;
+                    }
+                    Thread.sleep(500);
+                }
 
-                Thread.sleep((this.time + 1) * 1000);
+                p.setIsSubmit(false);
 
-                System.out.println("Thread wake up");
-
+                if (isFinish) {
+                    if (timer != null) {
+                        timer.stop();
+                        labTime.setText("00");
+                        btnNewGame.setEnabled(true);
+                        cbbTime.setEditable(true);
+                    }
+                    p.setIsTurn(false);
+                    break;
+                }
                 if (p.getIsTurn()) {
-                    System.out.println("getisturn: true");
                     --i;
+                    p.setIsTurn(false);
                 }
             } catch (InterruptedException ex) {
                 Logger.getLogger(ServerConnection.class.getName()).log(Level.SEVERE, null, ex);

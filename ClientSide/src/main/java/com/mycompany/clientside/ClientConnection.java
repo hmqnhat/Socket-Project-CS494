@@ -36,7 +36,7 @@ public class ClientConnection extends javax.swing.JFrame {
     private String keyword;
     private String hint;
     private int length;
-    private int turn;
+    private int intTurn;
     private Timer timerM;
     private Timer timerO;
 
@@ -49,7 +49,6 @@ public class ClientConnection extends javax.swing.JFrame {
     public ClientConnection() {
         initComponents();
         listPlayer = new ArrayList<Player>();
-        turn = 0;
         txtGuessKey.setText("");
         setTurn(false);
 
@@ -445,6 +444,9 @@ public class ClientConnection extends javax.swing.JFrame {
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         PORT = Integer.parseInt(txtPort.getText());
+        
+        txtPort.setEditable(false);
+        txtName.setEditable(false);
 
         try {
 
@@ -489,7 +491,20 @@ public class ClientConnection extends javax.swing.JFrame {
 
     private void btnSubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSubmitActionPerformed
         submitAction();
+        stopTimer();
     }//GEN-LAST:event_btnSubmitActionPerformed
+
+    private void stopTimer() {
+        if (timerM != null) {
+            timerM.stop();
+        }
+        if (timerO != null) {
+            timerO.stop();
+        }
+        labCurrentTime.setText("00");
+        labTimer.setText("00");
+
+    }
 
     private void submitAction() {
         if (this.isMyTurn) {
@@ -537,6 +552,7 @@ public class ClientConnection extends javax.swing.JFrame {
 
     private void recieveQuestion() {
         String temp;
+        intTurn = 0;
         setTurn(false);
         printNotice("New game just started");
         try {
@@ -564,10 +580,12 @@ public class ClientConnection extends javax.swing.JFrame {
         try {
             name = in.readLine();
             if (name.equals(this.name)) {
+                this.intTurn++;
                 setTurn(true);
                 mainCountDown();
                 txtCurrentPlayer.setText("YOUR TURN NOW");
-                //hết giờ tự submit coi như sai
+                System.out.println("Turn: " + this.intTurn);
+                //hết giờ tự submit
             } else {
                 txtCurrentPlayer.setText(name);
                 ortherCountDown();
@@ -580,15 +598,44 @@ public class ClientConnection extends javax.swing.JFrame {
     private void setTurn(boolean status) {
         btnSubmit.setEnabled(status);
         txtGuessChar.setEditable(status);
-        txtGuessKey.setEditable(status);
+        if (this.intTurn > 2) {
+            txtGuessKey.setEditable(status);
+        } else {
+            txtGuessKey.setEditable(false);
+        }
         this.isMyTurn = status;
+    }
+    
+    private void recieveDialog(){
+        try {
+            String msg;
+
+            while (true) {
+                msg = in.readLine();
+                if (msg.equals("END_DIALOG")) {
+                    break;
+                }
+                JOptionPane.showMessageDialog(this, msg);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ClientConnection.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Can not read notification from server!!");
+        }
     }
 
     private void recieveNotice() {
         try {
             String msg;
+
             while (true) {
                 msg = in.readLine();
+                if (msg.contains("WINNER") || msg.contains("letters in the keyword") || msg.contains("is wrong character") || msg.contains("WRONG KEYWORD")) {
+                    stopTimer();
+                }
+                if (msg.contains("you lose your turn") || msg.contains("GREAT") || msg.contains("Maybe this question so difficult")) {
+                    stopTimer();
+                    setTurn(false);
+                }
                 if (msg.equals("END_NOTICE")) {
                     break;
                 }
@@ -733,6 +780,8 @@ public class ClientConnection extends javax.swing.JFrame {
                     recieveBlurKeyword();
                 } else if (res.equals("SCORE")) {
                     recieveScore();
+                } else if( res.equals("DIALOG")){
+                    recieveDialog();
                 }
             }
         } catch (IOException ex) {

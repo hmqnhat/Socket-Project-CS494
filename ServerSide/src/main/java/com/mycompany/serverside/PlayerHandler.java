@@ -31,6 +31,7 @@ public class PlayerHandler implements Runnable {
     private ServerConnection serverConn;
     private boolean isDisqualified;
     private boolean isTurn;
+    private boolean isSubmit;
 
     public PlayerHandler(String name, Socket playerSocket, BufferedReader in, PrintWriter out, ServerConnection server) throws IOException {
         this.name = name;
@@ -44,11 +45,20 @@ public class PlayerHandler implements Runnable {
         this.gKey = "";
         this.serverConn = server;
         this.isDisqualified = false;
-        isTurn = false;
+        this.isTurn = false;
+        this.isSubmit = false;
     }
 
     public boolean getIsTurn() {
         return this.isTurn;
+    }
+
+    public boolean getIsSubmit() {
+        return isSubmit;
+    }
+
+    public void setIsSubmit(boolean isSubmit) {
+        this.isSubmit = isSubmit;
     }
 
     public void setIsTurn(boolean turn) {
@@ -174,12 +184,24 @@ public class PlayerHandler implements Runnable {
         }
     }
 
-    public void sendBlurKeyToAll() {
+    public void sendBlurKeyToAll(boolean isFinish) {
         for (PlayerHandler player : listPlayer) {
             player.out.println("BLUR");
-            player.out.println(question.getBlurKeyword());
+            if (isFinish) {
+                player.out.println(question.getKeyword());
+            } else {
+                player.out.println(question.getBlurKeyword());
+            }
             player.out.println("END_BLUR");
 
+        }
+    }
+
+    public void sendDialogToAll(String msg) {
+        for (PlayerHandler p : listPlayer) {
+            p.out.println("DIALOG");
+            p.out.println(msg);
+            p.out.println("END_DIALOG");
         }
     }
 
@@ -204,7 +226,7 @@ public class PlayerHandler implements Runnable {
                         System.out.println("gChar: " + gChar);
 
                         //gọi hàm guessChar đúng trả về true, sai: false
-                        if (this.guessChar()) {
+                        if (this.guessChar() && !this.gChar.equals("")) {
                             //tiếp tục trả lời
 
                             System.out.println("guessChar(): true");
@@ -212,16 +234,21 @@ public class PlayerHandler implements Runnable {
                             this.isTurn = true;
 
                             sendNoticeToAll("There are \"" + gChar + "\" letters in the keyword, " + this.name + " will keep guessing");
-                            sendBlurKeyToAll();
+                            sendBlurKeyToAll(false);
                             //TODO: trường hợp đoán đúng ký tự cuối cùng
                             request = in.readLine();
                             if (request.equals("KEY")) {
                                 this.gKey = in.readLine();
                                 if (!this.gKey.equals("")) {
                                     if (this.guessKey()) {
-                                        //TODO: thông báo người chiến thắng
-                                        sendNoticeToAll("The keyword is " + this.gKey + ", " + this.name.toUpperCase() + " IS THE WINNER!!");
+                                        //thông báo người chiến thắng
                                         //TODO: kết thúc game, chuẩn bị game kế tiếp
+                                        sendScoreToAll();
+                                        serverConn.printScoreBoard();
+                                        sendNoticeToAll("The keyword is " + this.gKey + ", " + this.name.toUpperCase() + " IS THE WINNER!!");
+                                        sendDialogToAll(this.name.toUpperCase() + " IS THE WINNER!!");
+                                        sendBlurKeyToAll(true);
+                                        serverConn.setIsFinish(true);
                                     } else {
                                         sendNotice("WRONG KEYWORD, you are disqualified!!");
                                         //TODO: cho player mất quyền chơi trong game này
@@ -232,12 +259,40 @@ public class PlayerHandler implements Runnable {
                                 serverConn.printScoreBoard();
                             }
 
+                        } else if (this.gChar.equals("")) {
+                            this.gChar = "Blank character";
+                            request = in.readLine();
+                            if (request.equals("KEY")) {
+                                this.gKey = in.readLine();
+                                if (!this.gKey.equals("")) {
+                                    if (this.guessKey()) {
+                                        //thông báo người chiến thắng
+                                        //TODO: kết thúc game, chuẩn bị game kế tiếp
+                                        sendScoreToAll();
+                                        serverConn.printScoreBoard();
+                                        sendNoticeToAll("The keyword is " + this.gKey + ", " + this.name.toUpperCase() + " IS THE WINNER!!");
+                                        sendNotice("GREAT, YOU WIN!!");
+                                        sendDialogToAll(this.name.toUpperCase() + " IS THE WINNER!!");
+
+                                        sendBlurKeyToAll(true);
+                                        serverConn.setIsFinish(true);
+                                    } else {
+                                        sendNotice("WRONG KEYWORD, you are disqualified!!");
+                                        //TODO: cho player mất quyền chơi trong game này
+                                        this.isDisqualified = true;
+                                    }
+                                }
+                                sendScoreToAll();
+                                serverConn.printScoreBoard();
+                            }
+                            if (!serverConn.getIsFinish()) {
+                                this.isSubmit = true; //bấm submit -> break, reset time
+                                sendNotice(this.gChar + " is wrong character, you lose your turn!!");
+                                sendNoticeToAll(this.gChar + " is wrong character, " + this.name.toUpperCase() + " lose his/her turn!!");
+                            }
                         } else {
-
-                            System.out.println("guessChar(): false");
-
                             //sai mất lượt
-                            this.isTurn = false;
+                            this.isSubmit = true; //bấm submit -> break, reset time
                             sendNotice(this.gChar + " is wrong character, you lose your turn!!");
                             sendNoticeToAll(this.gChar + " is wrong character, " + this.name.toUpperCase() + " lose his/her turn!!");
                         }
