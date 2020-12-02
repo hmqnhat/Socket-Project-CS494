@@ -523,12 +523,13 @@ public class ServerConnection extends javax.swing.JFrame {
                 alignTurn();
             }
 
-            for (PlayerHandler p : listPlayer) {
-                p.sendNotice("Maybe this question so difficult, let's try with another question");
+            if (!isFinish) {
+                for (PlayerHandler p : listPlayer) {
+                    p.sendNotice("Maybe this question so difficult, let's try with another question");
+                }
+
+                listPlayer.get(0).sendDialogToAll("Let's try with another question!!");
             }
-
-            listPlayer.get(0).sendDialogToAll("Let's try with another question!!");
-
             if (timer != null) {
                 timer.stop();
                 labTime.setText("00");

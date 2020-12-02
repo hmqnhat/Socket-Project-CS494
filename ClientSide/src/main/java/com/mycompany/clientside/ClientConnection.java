@@ -444,7 +444,7 @@ public class ClientConnection extends javax.swing.JFrame {
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         PORT = Integer.parseInt(txtPort.getText());
-        
+
         txtPort.setEditable(false);
         txtName.setEditable(false);
 
@@ -605,8 +605,8 @@ public class ClientConnection extends javax.swing.JFrame {
         }
         this.isMyTurn = status;
     }
-    
-    private void recieveDialog(){
+
+    private void recieveDialog() {
         try {
             String msg;
 
@@ -629,10 +629,10 @@ public class ClientConnection extends javax.swing.JFrame {
 
             while (true) {
                 msg = in.readLine();
-                if (msg.contains("WINNER") || msg.contains("letters in the keyword") || msg.contains("is wrong character") || msg.contains("WRONG KEYWORD")) {
+                if (msg.contains("WINNER") || msg.contains("letters in the keyword") || msg.contains("is wrong character")) {
                     stopTimer();
                 }
-                if (msg.contains("you lose your turn") || msg.contains("GREAT") || msg.contains("Maybe this question so difficult")) {
+                if (msg.contains("you lose your turn") || msg.contains("GREAT") || msg.contains("Maybe this question so difficult") || msg.contains("WRONG KEYWORD")) {
                     stopTimer();
                     setTurn(false);
                 }
@@ -780,7 +780,7 @@ public class ClientConnection extends javax.swing.JFrame {
                     recieveBlurKeyword();
                 } else if (res.equals("SCORE")) {
                     recieveScore();
-                } else if( res.equals("DIALOG")){
+                } else if (res.equals("DIALOG")) {
                     recieveDialog();
                 }
             }
