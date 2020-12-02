@@ -245,6 +245,7 @@ public class PlayerHandler implements Runnable {
                                         //TODO: kết thúc game, chuẩn bị game kế tiếp
                                         sendScoreToAll();
                                         serverConn.printScoreBoard();
+                                        sendNotice("GREAT, YOU WIN!!");
                                         sendNoticeToAll("The keyword is " + this.gKey + ", " + this.name.toUpperCase() + " IS THE WINNER!!");
                                         sendDialogToAll(this.name.toUpperCase() + " IS THE WINNER!!");
                                         sendBlurKeyToAll(true);

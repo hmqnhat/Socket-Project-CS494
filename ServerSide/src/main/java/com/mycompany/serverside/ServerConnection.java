@@ -533,6 +533,7 @@ public class ServerConnection extends javax.swing.JFrame {
             if (timer != null) {
                 timer.stop();
                 labTime.setText("00");
+                readyForNewGame();
             }
 
         }).start();
@@ -632,9 +633,7 @@ public class ServerConnection extends javax.swing.JFrame {
                 if (isFinish) {
                     if (timer != null) {
                         timer.stop();
-                        labTime.setText("00");
-                        btnNewGame.setEnabled(true);
-                        cbbTime.setEditable(true);
+                        readyForNewGame();
                     }
                     p.setIsTurn(false);
                     break;
@@ -650,6 +649,12 @@ public class ServerConnection extends javax.swing.JFrame {
         }
     }
     //Kiểm tra trùng tên function
+
+    private void readyForNewGame() {
+        labTime.setText("00");
+        btnNewGame.setEnabled(true);
+        cbbTime.setEditable(true);
+    }
 
     private boolean checkDuplicate(String name) {
         if (listPlayer.size() > 0) {

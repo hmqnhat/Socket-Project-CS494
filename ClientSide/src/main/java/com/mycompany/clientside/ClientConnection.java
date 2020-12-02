@@ -271,6 +271,12 @@ public class ClientConnection extends javax.swing.JFrame {
             }
         });
 
+        txtGuessKey.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtGuessKeyKeyReleased(evt);
+            }
+        });
+
         btnSubmit.setBackground(new java.awt.Color(0, 102, 153));
         btnSubmit.setText("SUBMIT");
         btnSubmit.addActionListener(new java.awt.event.ActionListener() {
@@ -516,15 +522,24 @@ public class ClientConnection extends javax.swing.JFrame {
     }
 
     private void txtGuessCharKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtGuessCharKeyReleased
-        if (txtGuessChar.getText().length() == 0) {
-            btnSubmit.setEnabled(false);
+        if (txtGuessChar.getText().length() == 0 && txtGuessKey.getText().length() != 0) {
+            btnSubmit.setEnabled(true);
         } else if (txtGuessChar.getText().length() > 1) {
             labGuessChar.setText("Just one char");
             btnSubmit.setEnabled(false);
+        } else if (txtGuessChar.getText().length() == 0 && txtGuessKey.getText().length() == 0) {
+            btnSubmit.setEnabled(false);
         } else {
             btnSubmit.setEnabled(true);
+            labGuessChar.setText("");
         }
     }//GEN-LAST:event_txtGuessCharKeyReleased
+
+    private void txtGuessKeyKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtGuessKeyKeyReleased
+        if (txtGuessChar.getText().length() == 0 && txtGuessKey.getText().length() != 0) {
+            btnSubmit.setEnabled(true);
+        }
+    }//GEN-LAST:event_txtGuessKeyKeyReleased
 
     private void recieveListPlayer() {
 
