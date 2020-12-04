@@ -451,9 +451,6 @@ public class ClientConnection extends javax.swing.JFrame {
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         PORT = Integer.parseInt(txtPort.getText());
 
-        txtPort.setEditable(false);
-        txtName.setEditable(false);
-
         try {
 
             client = new Socket(HOST, PORT);
@@ -471,6 +468,8 @@ public class ClientConnection extends javax.swing.JFrame {
                 out.close();
             } else {
                 btnConnect.setEnabled(false);
+                txtPort.setEditable(false);
+                txtName.setEditable(false);
                 new Thread(() -> {
                     listenResponse();
                 }).start();

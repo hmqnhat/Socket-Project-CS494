@@ -407,15 +407,14 @@ public class ServerConnection extends javax.swing.JFrame {
         numberOfPlayers = Integer.parseInt(txtNumberOfPlayers.getText());
         pool = Executors.newFixedThreadPool(numberOfPlayers);
 
-        txtPort.setEditable(false);
-        txtNumberOfPlayers.setEditable(false);
-
         new Thread(() -> {
 
             try {
                 server = new ServerSocket(PORT);
                 JOptionPane.showMessageDialog(this, "Listening on port " + PORT);
                 btnListen.setEnabled(false);
+                txtPort.setEditable(false);
+                txtNumberOfPlayers.setEditable(false);
 
                 while (true) {
 
@@ -599,17 +598,20 @@ public class ServerConnection extends javax.swing.JFrame {
     public void alignTurn() {
 
         PlayerHandler p;
+        int temp;
         for (int i = 0; i < listPlayer.size(); i++) {
             p = listPlayer.get(i);
             if (p.getDisqualified()) {
                 continue;
             }
             // thông báo cho người chơi tiếp theo chuẩn bị
-            {
-                if (i + 1 < listPlayer.size()) {
-                    listPlayer.get(0).sendNotice("READY FOR YOUR TURN!! The next turn is yours");
-                }
+
+            if (i + 1 == listPlayer.size()) {
+                temp = 0;
+            } else {
+                temp = i + 1;
             }
+            listPlayer.get(temp).sendNotice("READY FOR YOUR TURN!! The next turn is yours");
 
             if (timer != null) {
                 timer.stop();
